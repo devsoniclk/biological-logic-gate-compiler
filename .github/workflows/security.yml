@@ -1,0 +1,19 @@
+name: Security Audit
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for committed secrets
+        run: |
+          echo "Scanning repository for accidental credentials..."
+          ! git grep -E -i "ghp_[A-Za-z0-9_]{36}|github_pat_[A-Za-z0-9_]{82}|sk-[a-zA-Z0-9]{32,}" -- . || exit 1
